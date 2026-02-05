@@ -1,0 +1,14 @@
+node_modules
+dist
+.env
+*.db
+*.db-journal
+uploads/*
+!uploads/.gitkeep
+.DS_Store
+coverage
+.vscode
+.idea
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id                 String     @id @default(uuid())
+  title              String?
+  text               String
+  image_url          String?
+  scheduled_at       DateTime?
+  timezone           String     @default("America/Sao_Paulo")
+  status             String     @default("DRAFT")
+  channels           String     @default("WHATSAPP")
+  provider_message_id String?
+  last_error         String?
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @updatedAt
+  queued_at          DateTime?
+  sent_at            DateTime?
+  failed_at          DateTime?
+  is_deleted         Boolean    @default(false)
+}

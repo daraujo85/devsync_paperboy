@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  paperboy:
+    build: .
+    ports:
+      - "${PORT-3010}:3010"
+    environment:
+      - DATABASE_URL=file:./devsync_paperboy.db
+      - PORT=3010
+      - DEFAULT_TIMEZONE=America/Sao_Paulo
+      - NODE_ENV=production
+    volumes:
+      - ./devsync_paperboy.db:/app/devsync_paperboy.db
+      - ./uploads:/app/uploads
+    restart: unless-stopped

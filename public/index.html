@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevSync Paperboy</title>
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <style>
+    :root {
+      --bg-color: #050011;
+      --card-bg: #110524;
+      --text-main: #00ff41;
+      --text-alt: #ff00ff;
+      --border-color: #00f0ff;
+      --input-bg: #000000;
+      --shadow-color: rgba(0, 240, 255, 0.5);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Courier New', Courier, monospace;
+      margin: 24px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    h1, h2 {
+      color: var(--text-alt);
+      text-shadow: 2px 2px 0px #00f0ff;
+      margin-top: 0;
+    }
+
+    header {
+      border-bottom: 2px dashed var(--text-main);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+    }
+
+    form, .card {
+      background-color: var(--card-bg);
+      border: 2px solid var(--border-color);
+      padding: 16px;
+      box-shadow: 4px 4px 0px var(--text-alt);
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 4px;
+      color: var(--border-color);
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--input-bg);
+      border: 1px solid var(--text-main);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 8px var(--text-main);
+      border-color: var(--text-alt);
+    }
+
+    button {
+      background-color: var(--text-main);
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 2px 2px 0px var(--text-alt);
+      transition: transform 0.1s;
+      margin-top: 12px;
+    }
+
+    button:hover {
+      background-color: var(--text-alt);
+      color: #fff;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px var(--text-main);
+    }
+
+    button:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      position: relative;
+    }
+
+    .card strong {
+      color: var(--text-alt);
+      font-size: 1.2em;
+    }
+
+    .status {
+      background-color: var(--text-main);
+      color: #000;
+      padding: 2px 6px;
+      font-weight: bold;
+    }
+
+    .actions {
+      margin-top: 16px;
+      border-top: 1px dotted var(--text-main);
+      padding-top: 12px;
+    }
+
+    .actions button {
+      margin-right: 12px;
+      font-size: 0.8em;
+      padding: 6px 12px;
+    }
+
+    img {
+      border: 2px solid var(--text-main);
+      margin-top: 8px;
+    }
+
+    /* Scanline effect */
+    body::before {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 2;
+      background-size: 100% 2px, 3px 100%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SYSTEM: DEVSYNC_PAPERBOY_V1</h1>
+    <p>> STATUS: ONLINE | READY FOR INPUT</p>
+  </header>
+
+  <section>
+    <h2 id="formTitle">// NEW_POST_MODULE</h2>
+    <form id="createForm">
+      <input type="hidden" id="editId" />
+      <label>> TITLE_INPUT</label>
+      <input type="text" name="title" placeholder="Enter post title..." />
+
+      <label>> TEXT_CONTENT (REQUIRED)</label>
+      <textarea name="text" required rows="4" placeholder="Type your message here..."></textarea>
+
+      <div class="grid">
+        <div>
+          <label>> UPLOAD_IMAGE (FILE)</label>
+          <input type="file" name="image" accept="image/*" />
+        </div>
+        <div>
+          <label>> OR_IMAGE_URL</label>
+          <input type="url" name="image_url" placeholder="https://..." />
+        </div>
+      </div>
+      
+      <div class="grid">
+        <div>
+          <label>> SCHEDULE_TIME (ISO)</label>
+          <input type="datetime-local" name="scheduled_at" />
+        </div>
+        <div>
+          <label>> INITIAL_STATUS</label>
+          <select name="status">
+            <option value="DRAFT">DRAFT</option>
+            <option value="SCHEDULED">SCHEDULED</option>
+          </select>
+        </div>
+      </div>
+      
+      <label>> TARGET_CHANNELS</label>
+      <div style="display: flex; gap: 16px; margin-top: 8px;">
+        <label style="display: inline-flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" name="channels" value="WHATSAPP" checked style="width: auto; margin-right: 8px;" />
+          [ WHATSAPP ]
+        </label>
+        <label style="display: inline-flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" name="channels" value="LINKEDIN" style="width: auto; margin-right: 8px;" />
+          [ LINKEDIN ]
+        </label>
+      </div>
+
+      <div id="formActions">
+        <button type="submit" id="submitBtn">[ EXECUTE_CREATE ]</button>
+        <button type="button" id="cancelEditBtn" style="display: none; background-color: #ff0055;">[ CANCEL_EDIT ]</button>
+      </div>
+    </form>
+  </section>
+
+  <section>
+    <h2>// DATABASE_RECORDS</h2>
+    <div id="posts"></div>
+  </section>
+
+  <script>
+    const api = '/api'
+    const postsDiv = document.getElementById('posts')
+    const createForm = document.getElementById('createForm')
+    const formTitle = document.getElementById('formTitle')
+    const submitBtn = document.getElementById('submitBtn')
+    const cancelEditBtn = document.getElementById('cancelEditBtn')
+    const editIdInput = document.getElementById('editId')
+
+    async function listPosts() {
+      const res = await fetch(api + '/posts')
+      const items = await res.json()
+      postsDiv.innerHTML = ''
+      items.forEach(p => postsDiv.appendChild(renderPost(p)))
+    }
+
+    function renderPost(p) {
+      const el = document.createElement('div')
+      el.className = 'card'
+      el.innerHTML = `
+        <div class="grid">
+          <div>
+            <div><strong>> TITLE: ${p.title || 'N/A'}</strong></div>
+            <div style="margin-top:8px; white-space: pre-wrap; font-size: 0.9em; color: #fff;">${p.text}</div>
+            ${p.image_url ? `<div><img src="${p.image_url}" alt="" style="max-width:100%; max-height: 200px; object-fit: contain;"/></div>` : ''}
+          </div>
+          <div style="font-size: 0.85em; border-left: 1px dashed var(--text-main); padding-left: 12px;">
+            <div>> STATUS: <span class="status">${p.status}</span></div>
+            <div>> SCHEDULED: ${p.scheduled_at ? new Date(p.scheduled_at).toLocaleString() : 'PENDING'}</div>
+            <div>> CHANNELS: ${(Array.isArray(p.channels) ? p.channels : []).join(', ')}</div>
+            ${p.last_error ? `<div style="color:red">> ERROR: ${p.last_error}</div>` : ''}
+            <div style="color: #666; margin-top: 4px;">> UUID: ${p.id}</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button data-action="edit" style="color: var(--text-alt);">[ EDIT ]</button>
+          <button data-action="schedule">[ SCHED ]</button>
+          <button data-action="cancel">[ CANCEL ]</button>
+          <button data-action="retry">[ RETRY ]</button>
+          <button data-action="delete" style="color: #ff0055;">[ DELETE ]</button>
+        </div>
+      `
+      
+      el.querySelector('button[data-action="edit"]').onclick = () => startEdit(p)
+
+      el.querySelector('button[data-action="schedule"]').onclick = async () => {
+        const dt = prompt('Data/hora ISO (YYYY-MM-DDTHH:mm)')
+        if (dt) {
+          await fetch(api + '/posts/' + p.id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ scheduled_at: dt, status: 'SCHEDULED' })
+          })
+          listPosts()
+        }
+      }
+      el.querySelector('button[data-action="cancel"]').onclick = async () => {
+        await fetch(api + '/posts/' + p.id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'CANCELED' })
+        })
+        listPosts()
+      }
+      el.querySelector('button[data-action="retry"]').onclick = async () => {
+        await fetch(api + '/posts/' + p.id + '/retry', { method: 'POST' })
+        listPosts()
+      }
+      el.querySelector('button[data-action="delete"]').onclick = async () => {
+        if (confirm('Confirma excluir (soft delete)?')) {
+          await fetch(api + '/posts/' + p.id, { method: 'DELETE' })
+          listPosts()
+        }
+      }
+      return el
+    }
+
+    function startEdit(p) {
+      editIdInput.value = p.id
+      createForm.title.value = p.title || ''
+      createForm.text.value = p.text || ''
+      createForm.image_url.value = p.image_url || ''
+      if (p.scheduled_at) {
+        // Format for datetime-local: YYYY-MM-DDTHH:mm
+        const date = new Date(p.scheduled_at)
+        date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+        createForm.scheduled_at.value = date.toISOString().slice(0, 16)
+      } else {
+        createForm.scheduled_at.value = ''
+      }
+      createForm.status.value = p.status
+      
+      // Reset checkboxes
+      document.querySelectorAll('input[name="channels"]').forEach(cb => cb.checked = false)
+      if (Array.isArray(p.channels)) {
+        p.channels.forEach(ch => {
+           const cb = document.querySelector(`input[name="channels"][value="${ch}"]`)
+           if (cb) cb.checked = true
+        })
+      }
+
+      formTitle.innerText = '// EDIT_POST_MODULE'
+      submitBtn.innerText = '[ SAVE_CHANGES ]'
+      cancelEditBtn.style.display = 'inline-block'
+      
+      createForm.scrollIntoView({ behavior: 'smooth' })
+    }
+
+    function cancelEdit() {
+      editIdInput.value = ''
+      createForm.reset()
+      formTitle.innerText = '// NEW_POST_MODULE'
+      submitBtn.innerText = '[ EXECUTE_CREATE ]'
+      cancelEditBtn.style.display = 'none'
+    }
+
+    cancelEditBtn.onclick = cancelEdit
+
+    createForm.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const fd = new FormData(createForm)
+      const id = editIdInput.value
+      
+      const scheduled_at = fd.get('scheduled_at')
+      let image_url = (fd.get('image_url') || '').toString() || undefined
+      const imageFile = fd.get('image')
+      
+      if (imageFile && imageFile.size > 0) {
+        const up = new FormData()
+        up.append('image', imageFile)
+        const upRes = await fetch(api + '/images', { method: 'POST', body: up })
+        const upJson = await upRes.json()
+        image_url = window.location.origin + upJson.path
+      }
+
+      const payload = {
+        title: fd.get('title') || undefined,
+        text: fd.get('text'),
+        image_url,
+        scheduled_at: scheduled_at ? new Date(scheduled_at).toISOString() : undefined,
+        status: fd.get('status') || 'DRAFT',
+        channels: fd.getAll('channels')
+      }
+
+      const url = id ? api + '/posts/' + id : api + '/posts'
+      const method = id ? 'PUT' : 'POST'
+
+      await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      
+      cancelEdit() // Resets form and mode
+      listPosts()
+    })
+
+    listPosts()
+  </script>
+</body>
+</html>
