@@ -135,6 +135,82 @@
       margin-top: 8px;
     }
 
+    /* CRT TV Effect */
+    .tv-container {
+      background-color: #202020;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        0 10px 20px rgba(0,0,0,0.5),
+        0 0 0 2px #111;
+      border-bottom: 6px solid #111; /* Thicker bottom for "stand" effect */
+      display: inline-block;
+      width: 100%;
+      max-width: 500px; /* Bigger size */
+      position: relative;
+      margin-top: 16px;
+      box-sizing: border-box;
+    }
+
+    .tv-container::before {
+      content: "PAPERBOY VISION";
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Arial', sans-serif;
+      font-size: 10px;
+      color: #666;
+      letter-spacing: 2px;
+      font-weight: bold;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .tv-screen {
+      position: relative;
+      background: #000;
+      border-radius: 50% / 10%; /* Vertical curvature */
+      overflow: hidden;
+      box-shadow: inset 0 0 20px #000;
+      border: 2px solid #000;
+    }
+    
+    /* Horizontal curvature fix to make it look like a tube */
+    .tv-crt {
+      border-radius: 10% / 50%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tv-screen img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: none; /* Remove global border */
+      margin: 0;
+      filter: contrast(1.1) saturate(1.2) brightness(1.1);
+    }
+
+    .tv-scanlines {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      background-size: 100% 4px, 4px 100%;
+      pointer-events: none;
+      z-index: 5;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.7); /* Vignette */
+    }
+
+    .tv-glare {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 25%);
+      pointer-events: none;
+      z-index: 6;
+    }
+
     /* Scanline effect */
     body::before {
       content: " ";
@@ -240,7 +316,16 @@
           <div>
             <div><strong>> TITLE: ${p.title || 'N/A'}</strong></div>
             <div style="margin-top:8px; white-space: pre-wrap; font-size: 0.9em; color: #fff;">${p.text}</div>
-            ${p.image_url ? `<div><img src="${p.image_url}" alt="" style="max-width:100%; max-height: 200px; object-fit: contain;"/></div>` : ''}
+            ${p.image_url ? `
+            <div class="tv-container">
+              <div class="tv-screen">
+                <div class="tv-crt">
+                  <div class="tv-scanlines"></div>
+                  <div class="tv-glare"></div>
+                  <img src="${p.image_url}" alt="" />
+                </div>
+              </div>
+            </div>` : ''}
           </div>
           <div style="font-size: 0.85em; border-left: 1px dashed var(--text-main); padding-left: 12px;">
             <div>> STATUS: <span class="status">${p.status}</span></div>
