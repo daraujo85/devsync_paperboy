@@ -1,12 +1,11 @@
 import { Router } from 'express'
-import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import fs from 'fs'
 import path from 'path'
+import { prisma } from '../lib/prisma'
 
 import { extractFilenameFromUrl } from '../utils'
 
-const prisma = new PrismaClient()
 export const postsRouter = Router()
 
 const channelsSchema = z.array(z.string()).min(1).default(['WHATSAPP'])

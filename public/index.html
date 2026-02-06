@@ -287,6 +287,17 @@
     </form>
   </section>
 
+  <section style="margin-top: 20px; border: 1px solid #333; padding: 15px; background: #111;">
+    <h2 style="color: #f0f;">// DATA_MANAGEMENT_MODULE</h2>
+    <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+      <button onclick="downloadBackup()" style="background: #004400;">> DOWNLOAD_BACKUP.ZIP</button>
+      <form id="restoreForm" style="display: flex; gap: 10px; align-items: center; flex: 1;">
+        <input type="file" name="backup" accept=".zip" required style="border: 1px solid #444; padding: 5px;" />
+        <button type="submit" style="background: #660000;">> UPLOAD_RESTORE_DANGER</button>
+      </form>
+    </div>
+  </section>
+
   <section>
     <h2>// DATABASE_RECORDS</h2>
     <div id="posts"></div>
@@ -300,6 +311,33 @@
     const submitBtn = document.getElementById('submitBtn')
     const cancelEditBtn = document.getElementById('cancelEditBtn')
     const editIdInput = document.getElementById('editId')
+
+    async function downloadBackup() {
+      window.location.href = api + '/backup'
+    }
+
+    const restoreForm = document.getElementById('restoreForm')
+    restoreForm.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      if (!confirm('WARNING: THIS WILL OVERWRITE ALL DATA AND IMAGES. CONTINUE?')) return
+      
+      const fd = new FormData(restoreForm)
+      try {
+        const res = await fetch(api + '/backup/restore', {
+          method: 'POST',
+          body: fd
+        })
+        const json = await res.json()
+        if (res.ok) {
+          alert('RESTORE SUCCESSFUL. RELOADING...')
+          window.location.reload()
+        } else {
+          alert('RESTORE FAILED: ' + (json.error || 'Unknown error'))
+        }
+      } catch (e) {
+        alert('RESTORE FAILED: ' + e.message)
+      }
+    })
 
     async function listPosts() {
       const res = await fetch(api + '/posts')
@@ -315,7 +353,6 @@
         <div class="grid">
           <div>
             <div><strong>> TITLE: ${p.title || 'N/A'}</strong></div>
-            <div style="margin-top:8px; white-space: pre-wrap; font-size: 0.9em; color: #fff;">${p.text}</div>
             ${p.image_url ? `
             <div class="tv-container">
               <div class="tv-screen">
@@ -326,6 +363,7 @@
                 </div>
               </div>
             </div>` : ''}
+            <div style="margin-top:8px; white-space: pre-wrap; font-size: 0.9em; color: #fff;">${p.text}</div>
           </div>
           <div style="font-size: 0.85em; border-left: 1px dashed var(--text-main); padding-left: 12px;">
             <div>> STATUS: <span class="status">${p.status}</span></div>

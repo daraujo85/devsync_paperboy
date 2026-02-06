@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import path from 'path'
 import { postsRouter } from './routes/posts'
 import { imagesRouter } from './routes/images'
+import { backupRouter } from './routes/backup'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './swagger'
 
@@ -24,6 +25,7 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/posts', postsRouter)
 app.use('/api/images', imagesRouter)
+app.use('/api/backup', backupRouter)
 app.use('/api/images', express.static(path.join(process.cwd(), 'uploads')))
 
 // Swagger Documentation
